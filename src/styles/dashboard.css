@@ -1,0 +1,23 @@
+.trade-button {
+    background: skyblue;
+    color: azure;
+    font-size: 1.5rem;
+    border-radius: .5rem;
+    border: none;
+    padding: 1rem 1.5rem;
+    transition: .25s ease-in-out;
+}
+
+.trade-button:hover {
+    cursor: pointer;
+    background: gold;
+    border: 1px solid black;
+    color: black;
+}
+
+.available-funds {
+    font-family: sans-serif;
+    position: fixed;
+    top: 12vh;
+    right: 2%;
+}

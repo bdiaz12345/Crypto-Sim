@@ -1,0 +1,14 @@
+.header-div {
+    background: dodgerblue;
+    width: 100vw;
+    height: 10vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+}
+
+.header-title {
+    color: white;
+    text-align: center;
+}
