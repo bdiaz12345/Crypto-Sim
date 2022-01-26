@@ -21,3 +21,29 @@
     top: 12vh;
     right: 2%;
 }
+
+.loading-spinner {
+    position: absolute;
+    top: 47vh;
+    left: 47vw;
+}
+
+@media (max-width: 500px) {
+    .trade-button {
+        padding: .5rem .75rem;
+        font-size: 1rem;
+        position: relative;
+        right: 5%;
+    }
+
+    .available-funds {
+        position: relative;
+        text-align: center;
+        right: 0;
+    }
+
+    .loading-spinner {
+        top: 45vh;
+        left: 40vw;
+    }
+}

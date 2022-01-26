@@ -59,11 +59,11 @@ function Dashboard() {
         <>
             <h1 className="available-funds">Available Funds: $10,000</h1>
             {isLoading  ?
-                <div style={{position: 'absolute', top: '47vh', left: '47vw'}}>
+                <div className="loading-spinner">
                     <BallTriangle color="dodgerblue" height={100} width={100} />
                 </div>
             :
-            <div style={{position: 'absolute', top: '10vw', overflow: 'scroll', height: '80vh', boxShadow: '0 5px 10px 0 rgba(0, 0, 0, .15)', width: '99vw'}}>
+            <div style={{position: 'absolute', top: '20vh', overflow: 'scroll', height: '80vh', boxShadow: '0 5px 10px 0 rgba(0, 0, 0, .15)', width: '99vw'}}>
                 <div style={{display: 'flex', alignItems: 'center'}}>
 
                     <Plot
