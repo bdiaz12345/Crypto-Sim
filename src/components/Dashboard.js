@@ -6,7 +6,7 @@ import '../styles/dashboard.css'
 import Modal from 'react-modal';
 import LoadingBar from 'react-top-loading-bar';
 
-const phoneSize = window.matchMedia("max-width: 500px").matches
+const phoneSize = window.matchMedia("(max-width: 500px)").matches
 
 const customStyles = {
   content: {
@@ -14,8 +14,11 @@ const customStyles = {
     left: '50%',
     right: 'auto',
     bottom: 'auto',
-    width: phoneSize ? window.innerWidth : window.innerWidth * .92,
-    padding: '1rem .3rem',
+    boxSizing: 'border-box',
+    objectFit: 'contain',
+    overFlow: 'none',
+    height: window.innerHeight * .7,
+    padding: phoneSize ? '1rem .3rem' : '2rem 2rem 1rem 2rem',
     marginRight: 0,
     transform: 'translate(-50%, -50%)',
   },
@@ -223,7 +226,7 @@ function Dashboard() {
                         grid: {
                             roworder: "bottom to top",
                         },
-                        width: phoneSize ? window.innerWidth * .9 : window.innerWidth * .9125
+                        width: window.innerWidth * .9,
                     }}
                     config={{ responsive: false, displayModeBar: false }}
                     data={
@@ -241,7 +244,7 @@ function Dashboard() {
                     <div className="single-plot-div">
                         <h2>Price: ${selectedCoin.price ? selectedCoin.price.price[selectedCoin.price.price.length - 1].toString().slice(0, 7) : null}</h2>
                         <div className="buy-div">
-                            <h2>$</h2><input value={amountToBuy} onChange={(e) => {setAmountToBuyHandler(e.target.value); console.log(e.target.value)}} className="buy-input" placeholder="$1000"/>
+                            <h2>$</h2><input value={amountToBuy} onChange={(e) => {setAmountToBuyHandler(e.target.value); console.log(e.target.value)}} className="buy-input" placeholder="1000"/>
                             <button onClick={onBuy} className="buy-button">Buy</button>
                         </div>
                         <div className="sell-div">

@@ -3,7 +3,7 @@
     overflow: scroll;
     height: 80vh;
     box-shadow: 0 5px 10px 0 rgba(0, 0, 0, .15);
-    width: 99vw;
+    width: 100vw;
 }
 
 .trade-button {
@@ -52,7 +52,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    width: 98vw;
+    width: 99vw;
     margin-bottom: 5rem;
     border: 1px solid #e7e7e7;
     box-shadow: 0 5px 10px 0 rgba(0, 0, 0 .15);
@@ -68,7 +68,7 @@
 }
 
 .single-plot-div {
-    margin-top: 1rem;
+    height: 19vh;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -89,6 +89,8 @@
     box-shadow: 0 5px 10px 0 rgba(0, 0, 0, .15);
     border: 1px solid aliceblue;
     height: 6vh;
+    padding-left: .2rem;
+    margin-left: .2rem;
 }
 
 .buy-button, .sell-button {
@@ -117,18 +119,18 @@
     }
 
     .available-funds {
-        position: relative;
-        text-align: center;
         margin-left: 0;
+        font-size: 1.5rem;
     }
 
     .total-funds {
         margin-right: 0;
+        font-size: 1.5rem;
     }
 
     .loading-spinner {
         top: 45vh;
-        left: 40vw;
+        left: 38vw;
     }
 
     .funds-div {
@@ -141,7 +143,7 @@
 
     .plot-div {
         flex-direction: column;
-        width:99vw;
+        width:100vw;
     }
     .buy-input {
         width: 200px;
