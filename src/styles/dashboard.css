@@ -1,3 +1,11 @@
+.dash-sub {
+    position: fixed;
+    overflow: scroll;
+    height: 80vh;
+    box-shadow: 0 5px 10px 0 rgba(0, 0, 0, .15);
+    width: 99vw;
+}
+
 .trade-button {
     background: skyblue;
     color: azure;
@@ -12,15 +20,26 @@
 .trade-button:hover {
     cursor: pointer;
     background: gold;
-    border: 1px solid black;
     color: black;
+}
+
+.funds-div {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 10vh;
+    height: 10vh;
+    border-bottom: 1px solid black;
 }
 
 .available-funds {
     font-family: sans-serif;
-    position: absolute;
-    top: 12vh;
-    right: 2%;
+    margin-left: 1rem;
+}
+
+.total-funds {
+    font-family: sans-serif;
+    margin-right: 1rem;
 }
 
 .loading-spinner {
@@ -47,6 +66,50 @@
     align-items: center;
     text-align: center;
 }
+
+.single-plot-div {
+    margin-top: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.buy-div, .sell-div {
+    display: flex;
+    align-items: center;
+}
+
+.buy-input, .sell-input {
+    width: 10vw;
+    height: 5vh;
+    font-size: 2rem;
+    line-height: 2rem;
+    border: none;
+    border-radius: .375rem;
+    box-shadow: 0 5px 10px 0 rgba(0, 0, 0, .15);
+    border: 1px solid aliceblue;
+    height: 6vh;
+}
+
+.buy-button, .sell-button {
+    background: skyblue;
+    color: azure;
+    font-size: 1rem;
+    border-radius: .5rem;
+    border: none;
+    padding: 1rem 1.2rem;
+    height: 6vh;
+    transition: .25s ease-in-out;
+    margin-left: .2rem;
+    box-shadow: 0 5px 10px 0 rgba(0, 0, 0, .15);
+}
+
+.buy-button:hover, .sell-button:hover {
+    cursor: pointer;
+    background: gold;
+    color: black;
+}
+
 @media (max-width: 500px) {
     .trade-button {
         padding: .5rem .75rem;
@@ -56,7 +119,11 @@
     .available-funds {
         position: relative;
         text-align: center;
-        right: 0;
+        margin-left: 0;
+    }
+
+    .total-funds {
+        margin-right: 0;
     }
 
     .loading-spinner {
@@ -64,8 +131,26 @@
         left: 40vw;
     }
 
+    .funds-div {
+        display: flex;
+        justify-content: center;
+        flex-flow: wrap;
+        height: 10vh;
+        margin-top: 10vh;
+    }
+
     .plot-div {
         flex-direction: column;
         width:99vw;
+    }
+    .buy-input {
+        width: 200px;
+    }
+
+    .single-plot-div {
+        height: 30vh;
+        flex-flow: wrap;
+        align-items: center;
+        justify-content: flex-end;
     }
 }
