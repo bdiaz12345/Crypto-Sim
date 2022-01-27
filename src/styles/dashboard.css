@@ -26,6 +26,8 @@
 .funds-div {
     display: flex;
     justify-content: space-between;
+    position: static;
+    width: 100vw;
     align-items: center;
     margin-top: 10vh;
     height: 10vh;
@@ -95,6 +97,8 @@
 
 .buy-button, .sell-button {
     background: skyblue;
+    display: flex;
+    align-items: center;
     color: azure;
     font-size: 1rem;
     border-radius: .5rem;

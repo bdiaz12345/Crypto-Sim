@@ -17,7 +17,7 @@ const customStyles = {
     boxSizing: 'border-box',
     objectFit: 'contain',
     overFlow: 'none',
-    height: window.innerHeight * .7,
+    height: phoneSize ? window.innerHeight * .8 : window.innerHeight * .7,
     padding: phoneSize ? '1rem .3rem' : '2rem 2rem 1rem 2rem',
     marginRight: 0,
     transform: 'translate(-50%, -50%)',
