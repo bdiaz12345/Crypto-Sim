@@ -10,6 +10,28 @@ function Dashboard() {
     const [coinData, setCoinData] = useState(coins);
     const [isLoading, setIsLoading] = useState(true);
 
+    const fetchData = async (coin) => {
+        let data = { index: [], price: [], volumes: [] };
+        let result = await axios.get(`https://api.coingecko.com/api/v3/coins/${coin}/market_chart?vs_currency=usd&days=1&interval=1m`)
+            .then(result => {
+                return result.data
+            })
+        for (const item of result.prices) {
+            data.index.push(item[0]);
+            data.price.push(item[1]);
+        }
+        for (const item of result.total_volumes) data.volumes.push(item[1]);
+        return data;
+      };
+
+    const coinsWithPrices = () => 
+        coinData.map(coin => {
+            fetchData(coin.name).then(res => {
+                coin.price = res
+            })
+            return coin
+        });
+
 
     useEffect(() => {
         fetchCoins();
@@ -20,51 +42,27 @@ function Dashboard() {
     }, []);
 
     const refreshEveryMinute = () => setInterval(() => {
-        setIsLoading(true);
         fetchCoins();
         setTimeout(() => {
             setIsLoading(false)
         }, 2000);
         console.log('refreshed minute')
-    }, 60000);
+    }, 5000);
 
     const fetchCoins = () => {
-        const coinsWithPrices = coinData.map(coin => {
-            fetchData(coin.name).then(res => {
-                coin.price = res
-            });
-            return coin
-        });
-        setTimeout(() => {
-            setCoinData(coinsWithPrices)
-        }, 1000)
+        setCoinData(coinsWithPrices());
     }
-
-    const fetchData = async (coin) => {
-        let data = { index: [], price: [], volumes: [] };
-        let result = await axios.get(`https://api.coingecko.com/api/v3/coins/${coin}/market_chart?vs_currency=usd&days=1&interval=1m`)
-            .then(result => {
-                return result.data
-            })
-        console.log('result', result)
-        for (const item of result.prices) {
-            data.index.push(item[0]);
-            data.price.push(item[1]);
-        }
-        for (const item of result.total_volumes) data.volumes.push(item[1]);
-        return data;
-      };
 
     return (
         <>
             <h1 className="available-funds">Available Funds: $10,000</h1>
-            {isLoading  ?
+            {isLoading ?
                 <div className="loading-spinner">
                     <BallTriangle color="dodgerblue" height={100} width={100} />
                 </div>
             :
-            <div style={{position: 'absolute', top: '20vh', overflow: 'scroll', height: '80vh', boxShadow: '0 5px 10px 0 rgba(0, 0, 0, .15)', width: '99vw'}}>
-                <div style={{display: 'flex', alignItems: 'center'}}>
+            <div style={{position: 'fixed', top: '20vh', overflow: 'scroll', height: '80vh', boxShadow: '0 5px 10px 0 rgba(0, 0, 0, .15)', width: '99vw'}}>
+                <div className="plot-div">
 
                     <Plot
                         divId='1'
@@ -91,12 +89,13 @@ function Dashboard() {
                             grid: {
                                 roworder: "bottom to top",
                             },
+                            width: window.innerWidth * .92
                         }}
-                        config={{ responsive: true }}
+                        config={{ responsive: false, displayModeBar: false }}
                         data={
                             [{
-                                x: coinData[0].price.index.map((t) => new Date(t)),
-                                y: coinData[0].price.price,
+                                x: coinData[0].price ? coinData[0].price.index.map((t) => new Date(t)) : null,
+                                y: coinData[0].price ? coinData[0].price.price : null,
                                 xaxis: "x",
                                 yaxis: "y1",
                                 type: "scatter",
@@ -105,9 +104,12 @@ function Dashboard() {
                             }]
                         }
                         />
-                        <button className="trade-button">Trade</button>
+                        <div className="price-trade">
+                            <h2>Price: ${coinData[0].price ? coinData[0].price.price[coinData[0].price.price.length - 1].toString().slice(0, 4) : null}</h2>
+                            <button className="trade-button">Trade</button>
+                        </div>
                 </div>
-                <div style={{display: 'flex', alignItems: 'center'}}>
+                <div className="plot-div">
                         <Plot
                         divId='2'
                         layout={{
@@ -133,12 +135,13 @@ function Dashboard() {
                             grid: {
                                 roworder: "bottom to top",
                             },
+                            width: window.innerWidth * .92
                         }}
-                        config={{ responsive: true }}
+                        config={{ responsive: false, displayModeBar: false }}
                         data={
                             [{
-                                x: coinData[1].price.index.map((t) => new Date(t)),
-                                y: coinData[1].price.price,
+                                x: coinData[1].price ? coinData[1].price.index.map((t) => new Date(t)) : null,
+                                y: coinData[1].price ? coinData[1].price.price : null,
                                 xaxis: "x",
                                 yaxis: "y1",
                                 type: "scatter",
@@ -147,9 +150,12 @@ function Dashboard() {
                             }]
                         }
                         />
-                        <button className="trade-button">Trade</button>
+                        <div className="price-trade">
+                            <h2>Price: ${coinData[1].price ? coinData[1].price.price[coinData[1].price.price.length - 1].toString().slice(0, 5) : null}</h2>
+                            <button className="trade-button">Trade</button>
+                        </div>
                     </div>
-                    <div style={{display: 'flex', alignItems: 'center'}}>
+                    <div className="plot-div">
 
                         <Plot
                         divId='3'
@@ -176,12 +182,13 @@ function Dashboard() {
                             grid: {
                                 roworder: "bottom to top",
                             },
+                            width: window.innerWidth * .92
                         }}
-                        config={{ responsive: true }}
+                        config={{ responsive: false, displayModeBar: false }}
                         data={
                             [{
-                                x: coinData[2].price.index.map((t) => new Date(t)),
-                                y: coinData[2].price.price,
+                                x: coinData[2].price ? coinData[2].price.index.map((t) => new Date(t)) : null,
+                                y: coinData[2].price ? coinData[2].price.price : null,
                                 xaxis: "x",
                                 yaxis: "y1",
                                 type: "scatter",
@@ -190,7 +197,10 @@ function Dashboard() {
                             }]
                         }
                         />
-                        <button className="trade-button">Trade</button>
+                        <div className="price-trade">
+                            <h2>Price: ${coinData[2].price ? coinData[2].price.price[coinData[2].price.price.length - 1].toString().slice(0, 6) : null}</h2>
+                            <button className="trade-button">Trade</button>
+                        </div>
                     </div>
                 </div>
             }

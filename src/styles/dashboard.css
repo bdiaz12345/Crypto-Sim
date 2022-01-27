@@ -6,6 +6,7 @@
     border: none;
     padding: 1rem 1.5rem;
     transition: .25s ease-in-out;
+    margin-left: 1rem;
 }
 
 .trade-button:hover {
@@ -17,7 +18,7 @@
 
 .available-funds {
     font-family: sans-serif;
-    position: fixed;
+    position: absolute;
     top: 12vh;
     right: 2%;
 }
@@ -28,12 +29,28 @@
     left: 47vw;
 }
 
+.plot-div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 98vw;
+    margin-bottom: 5rem;
+    border: 1px solid #e7e7e7;
+    box-shadow: 0 5px 10px 0 rgba(0, 0, 0 .15);
+    padding-bottom: 2rem;
+}
+
+.price-trade {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
 @media (max-width: 500px) {
     .trade-button {
         padding: .5rem .75rem;
         font-size: 1rem;
-        position: relative;
-        right: 5%;
     }
 
     .available-funds {
@@ -45,5 +62,10 @@
     .loading-spinner {
         top: 45vh;
         left: 40vw;
+    }
+
+    .plot-div {
+        flex-direction: column;
+        width:99vw;
     }
 }
