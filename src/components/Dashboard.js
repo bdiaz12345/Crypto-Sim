@@ -450,7 +450,7 @@ function Dashboard() {
                         }
                         />
                         <div className="price-trade">
-                            <h2>Price: ${coinData[3].price ? coinData[3].price.price[coinData[3].price.price.length - 1].toString().slice(0, 4) : null}</h2>
+                            <h2>Price: ${coinData[3].price ? coinData[3].price.price[coinData[3].price.price.length - 1].toString().slice(0, 3) : null}</h2>
                             <button onClick={() => {openModal(coinData[3])}} className="trade-button">Trade</button>
                         </div>
                 </div>
