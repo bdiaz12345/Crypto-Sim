@@ -29,7 +29,7 @@ Modal.setAppElement('body');
 
 const coins = [{name: 'ethereum', price: ''}, {name: 'bitcoin', price: ''}, {name: 'dogecoin', price: ''}, {name: 'litecoin', price: ''}]
 let assets = []
-const initialFunds = 10000
+const initialFunds = 10000.00
 
 function Dashboard() {
     const [coinData, setCoinData] = useState(coins);
@@ -134,7 +134,7 @@ function Dashboard() {
                         asset.price = coin.price.price[coin.price.price.length - 1] * asset.fraction
                     }
                 })
-                return asset
+                return asset.slice(0,6)
             }))
         }
         setBuffer(false);
@@ -150,7 +150,7 @@ function Dashboard() {
     }
 
     const onBuy = () => {
-        const fraction = amountToBuy / selectedCoin.price.price[selectedCoin.price.price.length - 1]
+        const fraction = amountToBuy / selectedCoin.price.price[selectedCoin.price.price.length - 1].toString().slice(0,6)
         setAvailableFunds(availableFunds - amountToBuy)
         assets.push({name: selectedCoin.name, price: selectedCoin.price.price[selectedCoin.price.price.length - 1] * fraction, fraction: fraction})
         setCurrentAssets(assets)
@@ -256,8 +256,8 @@ function Dashboard() {
                     </div>
             </Modal>
             <div className="funds-div">
-                <h1 className="available-funds">Available Funds: ${availableFunds.toString().slice(0, 7)}</h1>
-                <h1 className="total-funds">Total Value: ${totalValue.toString().slice(0, 7)}</h1>
+                <h1 className="available-funds">Available Funds: ${availableFunds.toString().slice(0, 8)}</h1>
+                <h1 className="total-funds">Total Value: ${totalValue.toString().slice(0, 8)}</h1>
             </div>
             {isLoading || !coinData[0].price || !coinData[1].price || !coinData[2].price ?
                 <div className="loading-spinner">
