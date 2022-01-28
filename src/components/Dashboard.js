@@ -27,7 +27,7 @@ const customStyles = {
 // Make sure to bind modal to your appElement (https://reactcommunity.org/react-modal/accessibility/)
 Modal.setAppElement('body');
 
-const coins = [{name: 'ethereum', price: ''}, {name: 'bitcoin', price: ''}, {name: 'dogecoin', price: ''}]
+const coins = [{name: 'ethereum', price: ''}, {name: 'bitcoin', price: ''}, {name: 'dogecoin', price: ''}, {name: 'litecoin', price: ''}]
 let assets = []
 const initialFunds = 10000
 
@@ -406,6 +406,54 @@ function Dashboard() {
                             <button onClick={() => {openModal(coinData[2])}} className="trade-button">Trade</button>
                         </div>
                     </div>
+                    
+                    <div className="plot-div">
+
+                    <Plot
+                        divId='4'
+                        layout={{
+                            title: {
+                                text: 'LiteCoin'
+                            },
+                            plot_bgcolor: 'aliceblue',
+                            paper_bgcolor: 'aliceblue',
+                            showlegend: false,
+                            xaxis: {
+                                domain: [1, 1],
+                                anchor: "y2",
+                            },
+                            yaxis: {
+                                domain: [0.1, 1],
+                                anchor: "x",
+                            },
+                            yaxis2: {
+                                showticklabels: false,
+                                domain: [0, 0.1],
+                                anchor: "x",
+                            },
+                            grid: {
+                                roworder: "bottom to top",
+                            },
+                            width: window.innerWidth * .92
+                        }}
+                        config={{ responsive: false, displayModeBar: false }}
+                        data={
+                            [{
+                                x: coinData[3].price ? coinData[3].price.index.map((t) => new Date(t)) : null,
+                                y: coinData[3].price ? coinData[3].price.price : null,
+                                xaxis: "x",
+                                yaxis: "y1",
+                                type: "scatter",
+                                mode: "lines+markers",
+                                marker: { color: "purple", size: 2 }
+                            }]
+                        }
+                        />
+                        <div className="price-trade">
+                            <h2>Price: ${coinData[0].price ? coinData[0].price.price[coinData[0].price.price.length - 1].toString().slice(0, 4) : null}</h2>
+                            <button onClick={() => {openModal(coinData[0])}} className="trade-button">Trade</button>
+                        </div>
+                </div>
                 </div>
             }
             
