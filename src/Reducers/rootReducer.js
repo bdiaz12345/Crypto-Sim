@@ -1,10 +1,8 @@
-const initState = {
-    posts: []
-}
-
-
-const rootReducer = (state, action) => {
+const rootReducer = (state = [], action) => {
+    if (action.type === "onBuy") {
+        return [...state, action.payload];
+    }
     return state;
 }
 
-export default rootReducer
+export default rootReducer;
