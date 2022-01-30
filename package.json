@@ -13,9 +13,11 @@
     "react-loader-spinner": "^5.1.0",
     "react-modal": "^3.14.4",
     "react-plotly.js": "^2.5.1",
+    "react-redux": "^7.2.6",
     "react-router-dom": "^6.2.1",
     "react-scripts": "5.0.0",
     "react-top-loading-bar": "^2.1.0",
+    "redux": "^4.1.2",
     "stream": "^0.0.2",
     "web-vitals": "^2.1.4"
   },
