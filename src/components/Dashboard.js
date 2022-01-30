@@ -32,13 +32,20 @@ Modal.setAppElement('body');
 const coins = [{name: 'ethereum', price: ''}, {name: 'bitcoin', price: ''}, {name: 'dogecoin', price: ''}, {name: 'litecoin', price: ''}]
 let assets = []
 const initialFunds = 10000
+let total = 0
+if (user.assets) {
+    user.assets.forEach(asset => {
+        total += asset.price;
+    })
+}
+const userPersistentFunds = user.availableFunds ? user.availableFunds : total > 0 ? initialFunds - total : initialFunds
 
 function Dashboard() {
     const [coinData, setCoinData] = useState(coins);
     const [buffer, setBuffer] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
     const [selectedCoin, setSelectedCoin] = useState({});
-    const [availableFunds, setAvailableFunds] = useState(user.availableFunds ? user.availableFunds : initialFunds);
+    const [availableFunds, setAvailableFunds] = useState(userPersistentFunds);
     const [amountToBuy, setAmountToBuy] = useState(0);
     const [currentAssets, setCurrentAssets] = useState(user.assets ? user.assets : assets);
     const [currentAssetPrices, setCurrentAssetPrices] = useState([]);
@@ -77,6 +84,8 @@ function Dashboard() {
 
     function closeModal() {
         setSelectedAssetPrice('0');
+        setDisabled(false);
+        setTooLittle(false);
         setIsOpen(false);
     }
 
@@ -177,8 +186,10 @@ function Dashboard() {
     const onBuy = () => {
         if (amountToBuy > availableFunds) {
             setDisabled(true);
+            setTooLittle(false);
         } else if (!amountToBuy > 0) {
             setTooLittle(true);
+            setDisabled(false);
         } else {
             setDisabled(false)
             setTooLittle(false)
