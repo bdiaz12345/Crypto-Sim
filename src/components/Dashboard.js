@@ -41,6 +41,7 @@ function Dashboard() {
     const [currentAssets, setCurrentAssets] = useState(assets);
     const [totalValue, setTotalValue] = useState(initialFunds);
     const [progress, setProgress] = useState(0);
+    const [disabled, setDisabled] = useState(false);
 
     const [modalIsOpen, setIsOpen] = React.useState(false);
 
@@ -150,11 +151,16 @@ function Dashboard() {
     }
 
     const onBuy = () => {
-        const fraction = amountToBuy / selectedCoin.price.price[selectedCoin.price.price.length - 1].toString().slice(0,6)
-        setAvailableFunds(availableFunds - amountToBuy)
-        assets.push({name: selectedCoin.name, price: selectedCoin.price.price[selectedCoin.price.price.length - 1] * fraction, fraction: fraction})
-        setCurrentAssets(assets)
-        setAmountToBuy(0)
+        if (amountToBuy > availableFunds) {
+            setDisabled(true);
+        } else {
+            setDisabled(false)
+            const fraction = amountToBuy / selectedCoin.price.price[selectedCoin.price.price.length - 1]
+            setAvailableFunds(availableFunds - amountToBuy)
+            assets.push({name: selectedCoin.name, price: selectedCoin.price.price[selectedCoin.price.price.length - 1] * fraction, fraction: fraction})
+            setCurrentAssets(assets)
+            setAmountToBuy(0)
+        }
     }
 
     const sellFunctionHandler = () => {
@@ -246,6 +252,7 @@ function Dashboard() {
                         <div className="buy-div">
                             <h2>$</h2><input value={amountToBuy} onChange={(e) => {setAmountToBuyHandler(e.target.value); console.log(e.target.value)}} className="buy-input" placeholder="1000"/>
                             <button onClick={onBuy} className="buy-button">Buy</button>
+                            {disabled ? <p style={{color: 'red', display: 'flex', alignSelf: 'center', marginLeft: '.5rem', marginTop: '.5rem'}}>Not enough funds.</p> : null}
                         </div>
                         <div className="sell-div">
                             {/* <input className="sell-input" placeholder="$1000"/> */}
