@@ -9,7 +9,6 @@ import LoadingBar from 'react-top-loading-bar';
 const phoneSize = window.matchMedia("(max-width: 500px)").matches
 
 let user = JSON.parse(localStorage.getItem('cryptoUser')) ? JSON.parse(localStorage.getItem('cryptoUser')) : {}
-console.log(user)
 
 const customStyles = {
   content: {
@@ -46,6 +45,7 @@ function Dashboard() {
     const [totalValue, setTotalValue] = useState(user.totalValue ? user.totalValue : initialFunds);
     const [progress, setProgress] = useState(0);
     const [disabled, setDisabled] = useState(false);
+    const [tooLittle, setTooLittle] = useState(false);
     const [localData, setLocalData] = useState(user);
     const [selectedAssetPrice, setSelectedAssetPrice] = useState('0')
 
@@ -55,6 +55,9 @@ function Dashboard() {
 
     const handleInitialLoad = () => {
         // ref.current.continuousStart();
+        setTimeout(() => {
+            setIsLoading(false)
+        }, 10000)
       };
 
     function capitalizeFirstLetter(string) {
@@ -62,7 +65,6 @@ function Dashboard() {
       }
 
     const openModal = (e) => {
-        console.log(e)
         setSelectedCoin(e)
         currentAssetPrice(e)
         setIsOpen(true)
@@ -101,20 +103,8 @@ function Dashboard() {
         });
 
     const resetTotal = () => {
-        // if (currentAssets.length > 0) {
-        //     let total = 0;
-        //     currentAssets.forEach(asset => {
-        //         total += asset.price
-        //     })
-        //     setTotalValue(availableFunds + total)
-        // } else if (user.totalValue) {
-        //     setTotalValue(user.totalValue)
-        // } else if (!user.assets && !currentAssets.length) {
-        //     setTotalValue(availableFunds)
-        // }
-        const tempAssets = assets.length ? assets : currentAssets
-
-        if (tempAssets.length > 0) {
+        const tempAssets = assets
+        if (tempAssets.length) {
             let total = 0;
             tempAssets.forEach(asset => {
                 total += asset.price
@@ -126,14 +116,11 @@ function Dashboard() {
     }
 
     useEffect(() => {
-        setTimeout(() => {
-            setIsLoading(false);
-        }, 10000)
-    }, [coinData[2].price.length ? coinData[2].price : null])
-
-    useEffect(() => {
         handleInitialLoad();
         refreshEveryMinute();
+        if (user.assets) {
+            assets = user.assets
+        }
         if (currentAssets.length > 0) {
             let total = 0;
             currentAssets.forEach(asset => {
@@ -143,7 +130,6 @@ function Dashboard() {
         }
         setTimeout(() => {
             const tempUser = {assets: currentAssets, totalValue: totalValue, availableFunds: availableFunds}
-            console.log('user', JSON.parse(localStorage.getItem('cryptoUser')))
             if (!localData.length) {
                 localStorage.setItem('cryptoUser', JSON.stringify(tempUser))
                 setLocalData(JSON.parse(localStorage.getItem('cryptoUser')));
@@ -151,35 +137,37 @@ function Dashboard() {
         }, 10000)
     }, [])
 
+    
     const quickRefresh = () => {
         setBuffer(true);
-        fetchCoins();
-        const tempAssets = user.assets ? user.assets : currentAssets;
-        console.log(tempAssets)
-        tempAssets.map(asset => {
-            coinData.forEach(coin => {
-                if (coin.name === asset.name) {
-                    asset.price = coin.price.price[coin.price.price.length - 1] * asset.fraction
-                }
+        setTimeout(() => {
+            fetchCoins();
+            const tempAssets = assets;
+            tempAssets.map(asset => {
+                coinData.forEach(coin => {
+                    if (coin.name === asset.name) {
+                        asset.price = coin.price.price[coin.price.price.length - 1] * asset.fraction
+                    }
+                })
+                setCurrentAssetPrices([...currentAssetPrices, asset.price.toString().slice(0, 6)])
+                return asset
             })
-            setCurrentAssetPrices([...currentAssetPrices, asset.price.toString().slice(0, 6)])
-            return asset
-        })
-        setCurrentAssets(tempAssets)
-        let total = 0;
-        tempAssets.forEach(asset => {
-            total += asset.price
-        })
-        setBuffer(false);
+            setCurrentAssets(tempAssets)
+            let total = 0;
+            tempAssets.forEach(asset => {
+                total += asset.price
+            })
+            setBuffer(false);
+        }, 1000)
     }
     
-    const refreshEveryMinute = () => setInterval(() => {
-        quickRefresh();
-    }, 10000);
-
     useEffect(() => {
         resetTotal();
     }, [quickRefresh])
+
+    const refreshEveryMinute = () => setInterval(() => {
+        quickRefresh();
+    }, 10000);
 
 
     const fetchCoins = () => {
@@ -189,8 +177,11 @@ function Dashboard() {
     const onBuy = () => {
         if (amountToBuy > availableFunds) {
             setDisabled(true);
+        } else if (!amountToBuy > 0) {
+            setTooLittle(true);
         } else {
             setDisabled(false)
+            setTooLittle(false)
             const fraction = amountToBuy / selectedCoin.price.price[selectedCoin.price.price.length - 1]
             setSelectedAssetPrice(amountToBuy)
             setAvailableFunds(availableFunds - amountToBuy)
@@ -200,12 +191,12 @@ function Dashboard() {
             user = JSON.parse(localStorage.getItem('cryptoUser')) ? JSON.parse(localStorage.getItem('cryptoUser')) : {}
             setAmountToBuy(0)
         }
+        resetTotal()
     }
 
-    const sellFunctionHandler = async () => {
+    const sellFunctionHandler = () => {
         currentAssets.forEach(asset => {
             if (asset.name === selectedCoin.name) {
-                console.log(asset)
                 setAvailableFunds(availableFunds + asset.price)
                 assets =  assets.filter(asset => {
                     return asset.name !== selectedCoin.name
@@ -218,6 +209,7 @@ function Dashboard() {
         setSelectedAssetPrice('0');
         setTimeout(() => {
             quickRefresh()
+            resetTotal();
         }, 1000)
     }
 
@@ -225,7 +217,7 @@ function Dashboard() {
         if (buffer) {
             setTimeout(() => {
                 sellFunctionHandler();
-            }, 5000)
+            }, 1000)
         } else {
             sellFunctionHandler();
         }
@@ -235,19 +227,19 @@ function Dashboard() {
         setAmountToBuy(e)
     }
 
-    const currentAssetPrice = async (e) => {
-        console.log(await currentAssets)
-        console.log(e)
-        await currentAssets.forEach(asset => {
-            console.log(asset)
+    const currentAssetPrice = (e) => {
+        assets.forEach(asset => {
             let tempAssetPrice
             if (asset.name === e.name) {
-                console.log('hereeeeeeeee you shit')
                 tempAssetPrice = asset.fraction * e.price.price[e.price.price.length - 1]
-                console.log(tempAssetPrice)
                 setSelectedAssetPrice(tempAssetPrice.toString());
             }
         })
+    }
+
+    const hardReset = () => {
+        localStorage.clear();
+        window.location.reload();
     }
 
     return (
@@ -301,9 +293,10 @@ function Dashboard() {
                     <div className="single-plot-div">
                         <h2>Price: ${selectedCoin.price ? selectedCoin.price.price[selectedCoin.price.price.length - 1].toString().slice(0, 7) : null}</h2>
                         <div className="buy-div">
-                            <h2>$</h2><input value={amountToBuy} onChange={(e) => {setAmountToBuyHandler(e.target.value); console.log(e.target.value)}} className="buy-input" placeholder="1000"/>
+                            <h2>$</h2><input value={amountToBuy} onChange={(e) => {setAmountToBuyHandler(e.target.value);}} className="buy-input" placeholder="1000"/>
                             <button onClick={onBuy} className="buy-button">Buy</button>
                             {disabled ? <p style={{color: 'red', display: 'flex', alignSelf: 'center', marginLeft: '.5rem', marginTop: '.5rem'}}>Not enough funds.</p> : null}
+                            {tooLittle ? <p style={{color: 'red', display: 'flex', alignSelf: 'center', marginLeft: '.5rem', marginTop: '.5rem'}}>Amount too little.</p> : null }
                         </div>
                         <div className="sell-div">
                             {/* <input className="sell-input" placeholder="$1000"/> */}
@@ -511,6 +504,9 @@ function Dashboard() {
                             <h2>Price: ${coinData[3].price ? coinData[3].price.price[coinData[3].price.price.length - 1].toString().slice(0, 3) : null}</h2>
                             <button onClick={() => {openModal(coinData[3]);}} className="trade-button">Trade</button>
                         </div>
+                </div>
+                <div className="reset">
+                    <button onClick={hardReset} className="reset-button">Reset Values</button>
                 </div>
                 </div>
             }
