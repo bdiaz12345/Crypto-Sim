@@ -117,6 +117,9 @@
 }
 
 @media (max-width: 500px) {
+    .dash-sub {
+        margin-top: 20vh;
+    }
     .trade-button {
         padding: .5rem .75rem;
         font-size: 1rem;
@@ -140,6 +143,7 @@
     .funds-div {
         display: flex;
         justify-content: center;
+        position: fixed;
         flex-flow: wrap;
         height: 10vh;
         margin-top: 10vh;
