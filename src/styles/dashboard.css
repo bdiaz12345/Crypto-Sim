@@ -119,11 +119,13 @@
 .reset {
     display: flex;
     justify-content: center;
-    margin-bottom: 4rem;
+    position: fixed;
+    top: 2%;
+    right: 2%;
 }
 
 .reset-button {
-    background: red;
+    background: black;
     display: flex;
     align-items: center;
     color: azure;
@@ -132,9 +134,22 @@
     border: none;
     padding: 1rem 1.2rem;
     height: 6vh;
-    transition: .25s ease-in-out;
+    transition: .5s ease-in-out;
     margin-left: .2rem;
     box-shadow: 0 5px 10px 0 rgba(0, 0, 0, .15);
+}
+
+.reset-button:hover {
+    transform: scale(1.1);
+    cursor: pointer;
+    background: red;
+}
+
+.loading-tip {
+    position: relative;
+    top: 2vh;
+    left: -35%;
+    text-align: center;
 }
 
 @media (max-width: 500px) {
@@ -183,5 +198,9 @@
         flex-flow: wrap;
         align-items: center;
         justify-content: flex-end;
+    }
+
+    .loading-tip {
+        left: -30%;
     }
 }

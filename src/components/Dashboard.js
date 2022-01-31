@@ -7,8 +7,8 @@ import Modal from 'react-modal';
 import LoadingBar from 'react-top-loading-bar';
 
 const phoneSize = window.matchMedia("(max-width: 500px)").matches
-
 let user = JSON.parse(localStorage.getItem('cryptoUser')) ? JSON.parse(localStorage.getItem('cryptoUser')) : {}
+
 
 const customStyles = {
   content: {
@@ -48,7 +48,6 @@ function Dashboard() {
     const [availableFunds, setAvailableFunds] = useState(userPersistentFunds);
     const [amountToBuy, setAmountToBuy] = useState(0);
     const [currentAssets, setCurrentAssets] = useState(user.assets ? user.assets : assets);
-    const [currentAssetPrices, setCurrentAssetPrices] = useState([]);
     const [totalValue, setTotalValue] = useState(user.totalValue ? user.totalValue : initialFunds);
     const [progress, setProgress] = useState(0);
     const [disabled, setDisabled] = useState(false);
@@ -73,8 +72,20 @@ function Dashboard() {
 
     const openModal = (e) => {
         setSelectedCoin(e)
-        currentAssetPrice(e)
-        setIsOpen(true)
+        if (assets.find(asset => asset.name === e.name)) {
+            assets = assets.map(asset => {
+                if (asset.name === e.name) {
+                    setSelectedAssetPrice((asset.price + Number(amountToBuy)))
+                    asset.price = asset.price + Number(amountToBuy)
+                }
+                return asset
+            })
+            currentAssetPrice(e)
+            setCurrentAssets(assets)
+            setIsOpen(true)
+        } else {
+            setIsOpen(true)
+        }
     }
 
     function afterOpenModal() {
@@ -118,7 +129,9 @@ function Dashboard() {
             tempAssets.forEach(asset => {
                 total += asset.price
             })
-            setTotalValue(availableFunds + total)
+            setTimeout(() => {
+                setTotalValue(availableFunds + total)
+            }, 2000)
         } else {
             setTotalValue(availableFunds)
         }
@@ -151,27 +164,25 @@ function Dashboard() {
         setBuffer(true);
         setTimeout(() => {
             fetchCoins();
-            const tempAssets = assets;
-            tempAssets.map(asset => {
-                coinData.forEach(coin => {
-                    if (coin.name === asset.name) {
-                        asset.price = coin.price.price[coin.price.price.length - 1] * asset.fraction
-                    }
-                })
-                setCurrentAssetPrices([...currentAssetPrices, asset.price.toString().slice(0, 6)])
-                return asset
-            })
-            setCurrentAssets(tempAssets)
-            let total = 0;
-            tempAssets.forEach(asset => {
-                total += asset.price
-            })
             setBuffer(false);
-        }, 1000)
+        }, 2000)
     }
     
     useEffect(() => {
-        resetTotal();
+        setTimeout(() => {
+            resetTotal();
+            if (coinData[3].price && !isLoading && !buffer) {
+                const tempAssets = assets.map(asset => {
+                    coinData.forEach(coin => {
+                        if (asset?.name === coin?.name) {
+                            asset.price = coin.price.price[coin.price.price.length - 1] * asset.fraction
+                        }
+                    })
+                    return asset
+                })
+                assets = tempAssets
+            }
+        }, 1000)
     }, [quickRefresh])
 
     const refreshEveryMinute = () => setInterval(() => {
@@ -194,19 +205,37 @@ function Dashboard() {
             setDisabled(false)
             setTooLittle(false)
             const fraction = amountToBuy / selectedCoin.price.price[selectedCoin.price.price.length - 1]
-            setSelectedAssetPrice(amountToBuy)
             setAvailableFunds(availableFunds - amountToBuy)
-            assets.push({name: selectedCoin.name, price: selectedCoin.price.price[selectedCoin.price.price.length - 1] * fraction, fraction: fraction})
-            setCurrentAssets(assets)
+            if (assets.find(asset => asset.name === selectedCoin.name)) {
+                assets.forEach((asset) => {
+                    if (asset.name === selectedCoin.name) {
+                        setSelectedAssetPrice((asset.price + Number(amountToBuy)))
+                        const tempData = {
+                            fraction: (asset.price + Number(amountToBuy)) / selectedCoin.price.price[selectedCoin.price.price.length - 1],
+                            price: (asset.price + Number(amountToBuy)),
+                            name: asset.name
+                        }
+                        assets = assets.filter(a => {
+                            return a.name !== asset.name
+                        })
+                        assets.push(tempData)
+                    }
+                })
+                setCurrentAssets(assets)
+            } else {
+                assets.push({name: selectedCoin.name, price: selectedCoin.price.price[selectedCoin.price.price.length - 1] * fraction, fraction: fraction})
+                setSelectedAssetPrice(amountToBuy)
+                setCurrentAssets(assets)
+            }
             localStorage.setItem('cryptoUser', JSON.stringify({assets: assets, availableFunds: availableFunds - amountToBuy, totalValue: totalValue}))
             user = JSON.parse(localStorage.getItem('cryptoUser')) ? JSON.parse(localStorage.getItem('cryptoUser')) : {}
             setAmountToBuy(0)
+            quickRefresh()
         }
-        resetTotal()
     }
 
     const sellFunctionHandler = () => {
-        currentAssets.forEach(asset => {
+        assets.forEach(asset => {
             if (asset.name === selectedCoin.name) {
                 setAvailableFunds(availableFunds + asset.price)
                 assets =  assets.filter(asset => {
@@ -220,7 +249,6 @@ function Dashboard() {
         setSelectedAssetPrice('0');
         setTimeout(() => {
             quickRefresh()
-            resetTotal();
         }, 1000)
     }
 
@@ -242,8 +270,7 @@ function Dashboard() {
         assets.forEach(asset => {
             let tempAssetPrice
             if (asset.name === e.name) {
-                tempAssetPrice = asset.fraction * e.price.price[e.price.price.length - 1]
-                setSelectedAssetPrice(tempAssetPrice.toString());
+                setSelectedAssetPrice(asset.price.toString());
             }
         })
     }
@@ -311,10 +338,10 @@ function Dashboard() {
                         </div>
                         <div className="sell-div">
                             {/* <input className="sell-input" placeholder="$1000"/> */}
-                            <h2>${selectedAssetPrice}</h2>
+                            <h2>${selectedAssetPrice.toString().slice(0, 8)}</h2>
                             <button onClick={onSell} className="sell-button">Sell All</button>
                         </div>
-                        <h2>Available Funds: ${availableFunds}</h2>
+                        <h2>Available Funds: ${availableFunds.toString().slice(0, 5)}</h2>
                     </div>
             </Modal>
             <div className="funds-div">
@@ -325,6 +352,7 @@ function Dashboard() {
                 <div className="loading-spinner">
                     <LoadingBar height={4} color="gold" ref={ref} progress={progress} loaderSpeed={7000} />
                     <BallTriangle color="dodgerblue" height={100} width={100} />
+                    <p className="loading-tip">Tip: clicking on "RESET" will reset all of your data.</p>
                 </div>
             :
             <div className="dash-sub">
@@ -517,7 +545,7 @@ function Dashboard() {
                         </div>
                 </div>
                 <div className="reset">
-                    <button onClick={hardReset} className="reset-button">Reset Values</button>
+                    <button onClick={hardReset} className="reset-button">RESET</button>
                 </div>
                 </div>
             }
@@ -525,5 +553,6 @@ function Dashboard() {
 		</div>
     )
 }
+
 
 export default Dashboard;
