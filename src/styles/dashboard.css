@@ -117,14 +117,14 @@
 }
 
 .reset {
-    display: flex;
-    justify-content: center;
-    position: fixed;
-    top: 2%;
-    right: 2%;
+    
 }
 
 .reset-button {
+    position: fixed;
+    z-index: 1;
+    top: 2%;
+    right: 2%;
     background: black;
     display: flex;
     align-items: center;
