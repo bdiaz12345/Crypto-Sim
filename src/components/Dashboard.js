@@ -275,11 +275,6 @@ function Dashboard() {
         })
     }
 
-    const hardReset = () => {
-        localStorage.clear();
-        window.location.reload();
-    }
-
     return (
         <div className="dash">
             <Modal
@@ -543,9 +538,6 @@ function Dashboard() {
                             <h2>Price: ${coinData[3].price ? coinData[3].price.price[coinData[3].price.price.length - 1].toString().slice(0, 3) : null}</h2>
                             <button onClick={() => {openModal(coinData[3]);}} className="trade-button">Trade</button>
                         </div>
-                </div>
-                <div className="reset">
-                    <button onClick={hardReset} className="reset-button">RESET</button>
                 </div>
                 </div>
             }

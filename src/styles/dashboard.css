@@ -116,35 +116,6 @@
     color: black;
 }
 
-.reset {
-    
-}
-
-.reset-button {
-    position: fixed;
-    z-index: 1;
-    top: 2%;
-    right: 2%;
-    background: black;
-    display: flex;
-    align-items: center;
-    color: azure;
-    font-size: 1rem;
-    border-radius: .5rem;
-    border: none;
-    padding: 1rem 1.2rem;
-    height: 6vh;
-    transition: .5s ease-in-out;
-    margin-left: .2rem;
-    box-shadow: 0 5px 10px 0 rgba(0, 0, 0, .15);
-}
-
-.reset-button:hover {
-    transform: scale(1.1);
-    cursor: pointer;
-    background: red;
-}
-
 .loading-tip {
     position: relative;
     top: 2vh;
